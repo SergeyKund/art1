@@ -6,7 +6,6 @@ from django.shortcuts import render
 from django.views import View
 
 from apps.product.models import Product
-from apps.product.models import Brand
 from apps.product.forms import SearchForm
 
 
@@ -53,19 +52,6 @@ class ProductsView(View):
 
         return response
 
-class BrandView(View):
-    template_name = 'brands.html'
-    def get(self, request):
-        form = SearchForm()
-
-        brands = Brand.objects.all()
-
-        context = {
-            'brands': brands,
-            'form': form,
-        }
-        response = render(request, self.template_name, context=context)
-        return response
 
 
 def product_by_id(request, product_id=None, *args, **kwargs):

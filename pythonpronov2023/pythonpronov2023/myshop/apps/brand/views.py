@@ -24,12 +24,37 @@ class BrandView(View):
         response = render(request, self.template_name, context=context)
         return response
 
+    def post(self, request):
 
-def product_by_id(request, brand_id=None, *args, **kwargs):
+        brands = Brand.objects.all()
+        form = SearchForm(request.POST)
+
+        form.is_valid()
+        search_value = form.cleaned_data['search']
+
+        if search_value:
+            query = (Q(name_brand=search_value) | Q(description_brand__icontains=search_value)
+                     | Q(country_brand=search_value))
+
+
+            brands = brands.filter(
+                query,
+            )
+        context = {
+            'brands': brands,
+            'form': form,
+        }
+        response = render(request, self.template_name, context=context)
+
+        return response
+
+
+
+def brand_by_id(request, brand_id=None, *args, **kwargs):
     if not (brands := Brand.objects.filter(id=brand_id)):
         raise Http404("Brand does not exist")
 
-    return render(request, 'brands.html', context={'brand': brands.last()})
+    return render(request, 'brand.html', context={'brand': brands.last()})
 
 
 
